@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoAprende | Aprender también es cuidar</title>
+  <style>
+    :root{
+      --verde:#315b46; --verde2:#557a60; --menta:#e8f0e7; --crema:#faf8f0;
+      --tinta:#26352b; --gris:#66736a; --borde:#d9e2d7; --blanco:#fff;
+      --dorado:#d8b66b; --sombra:0 12px 35px rgba(37,65,47,.09);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--crema);color:var(--tinta);font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+    header{background:linear-gradient(135deg,#244a38,#52785e);color:#fff;padding:22px 20px}
+    .top{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:15px;background:#f3f0df;color:var(--verde);display:grid;place-items:center;font-size:26px;font-weight:800}
+    h1,h2,h3,p{margin-top:0} h1{font-size:1.55rem;margin-bottom:0;letter-spacing:.2px}
+    .tag{font-size:.88rem;color:#e2eadf;margin:3px 0 0}
+    .pill{border:1px solid #ffffff55;border-radius:999px;padding:7px 12px;font-size:.8rem;white-space:nowrap}
+    main{max-width:1000px;margin:28px auto;padding:0 18px 50px}
+    .intro{display:grid;grid-template-columns:1.35fr .65fr;gap:18px;margin-bottom:20px}
+    .hero,.side,.panel,.result-card{background:#fff;border:1px solid var(--borde);border-radius:20px;box-shadow:var(--sombra)}
+    .hero{padding:25px 27px}.hero h2{font-size:1.65rem;color:var(--verde);margin-bottom:8px}
+    .hero p{margin-bottom:12px;color:#536258}
+    .side{padding:22px;background:var(--menta);box-shadow:none}
+    .side strong{color:var(--verde)} .side ul{padding-left:20px;margin-bottom:0}
+    .progress-wrap{margin:22px 0 16px}
+    .progress-head{display:flex;justify-content:space-between;gap:10px;font-size:.88rem;color:var(--gris);margin-bottom:8px}
+    .progress{height:8px;background:#e5eae2;border-radius:99px;overflow:hidden}
+    .bar{height:100%;width:20%;background:var(--verde2);transition:width .25s}
+    .panel{padding:26px;margin-bottom:18px;box-shadow:none}
+    .step{display:none;scroll-margin-top:24px}.step.active{display:block}
+    .step-title{display:flex;gap:13px;align-items:flex-start;margin-bottom:22px}
+    .num{background:var(--menta);color:var(--verde);font-weight:800;border-radius:12px;width:42px;height:42px;display:grid;place-items:center;flex-shrink:0}
+    h2{font-size:1.3rem;color:var(--verde);margin-bottom:5px}
+    .muted{color:var(--gris);font-size:.94rem}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+    .field{margin-bottom:18px}.field.full{grid-column:1/-1}
+    label,.label{display:block;font-weight:700;font-size:.94rem;margin-bottom:7px}
+    .hint{font-size:.82rem;color:var(--gris);margin-top:5px}
+    input[type=text],input[type=number],select,textarea{width:100%;padding:12px 13px;border:1px solid #cbd7ca;border-radius:11px;background:#fff;font:inherit;color:var(--tinta)}
+    input:focus,select:focus,textarea:focus{outline:3px solid #dbe9d8;border-color:var(--verde2)}
+    .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .option{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--borde);border-radius:11px;padding:11px 12px;font-weight:400;cursor:pointer;margin:0;background:#fff}
+    .option:has(input:checked){border-color:var(--verde2);background:#f0f6ef}
+    .option input{margin-top:5px;accent-color:var(--verde)}
+    .actions{display:flex;justify-content:space-between;gap:12px;margin-top:25px}
+    button{border:0;border-radius:11px;padding:12px 19px;font:inherit;font-weight:700;cursor:pointer}
+    .primary{background:var(--verde);color:#fff}.primary:hover{background:#244a38}
+    .secondary{background:#edf1e9;color:var(--verde)}button:disabled{opacity:.4;cursor:not-allowed}
+    .note{background:#fff7e3;border:1px solid #f0dfad;padding:13px 15px;border-radius:12px;font-size:.88rem;color:#6b5829;margin-top:15px}
+    .error{display:none;background:#fff0ed;border:1px solid #e9b5a9;color:#843d31;padding:12px;border-radius:10px;margin-top:14px}
+    #results{display:none}
+    .results-head{background:linear-gradient(135deg,#244a38,#52785e);color:#fff;padding:27px;border-radius:18px;margin-bottom:18px}
+    .results-head h2{color:#fff;font-size:1.8rem}
+    .results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .result-card{padding:20px;box-shadow:none}
+    .result-card h3{color:var(--verde);margin-bottom:10px}
+    .result-card ul{padding-left:20px;margin-bottom:0}
+    .full-card{grid-column:1/-1}
+    .badge{display:inline-block;background:var(--menta);color:var(--verde);padding:5px 10px;border-radius:999px;font-size:.82rem;font-weight:700;margin:3px 4px 3px 0}
+    .foot{font-size:.83rem;color:var(--gris);text-align:center;margin-top:25px}
+    .hide{display:none!important}
+    /* EcoAprende visual refresh */
+    body{background:radial-gradient(circle at 8% 18%,#edf4e8 0,transparent 24%),radial-gradient(circle at 92% 42%,#f7efd9 0,transparent 22%),var(--crema)}
+    header{position:relative;overflow:hidden;background:linear-gradient(115deg,#173d2b 0%,#315b46 55%,#73936a 100%)}
+    header:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #ffffff18;border-radius:50%;right:-65px;top:-145px;box-shadow:0 0 0 24px #ffffff08,0 0 0 50px #ffffff06;pointer-events:none}
+    .top{position:relative;z-index:1}
+    .logo{border-radius:18px;box-shadow:0 5px 15px #102b1e55;overflow:hidden}
+    .brand h1{font-size:1.7rem;letter-spacing:.4px}
+    main{max-width:1080px}
+    .intro{grid-template-columns:1.25fr .75fr;gap:20px;margin-top:30px}
+    .hero{position:relative;overflow:hidden;min-height:260px;padding:32px;background:linear-gradient(135deg,#fff 0%,#f2f7ed 100%);border:1px solid #d9e7d5}
+    .hero:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-65px;bottom:-80px;background:#dcebd5;opacity:.7}
+    .hero-copy{position:relative;z-index:1;max-width:76%}
+    .hero h2{font-size:clamp(1.65rem,3vw,2.25rem);line-height:1.13;letter-spacing:-.5px}
+    .hero p{font-size:1rem}
+    .hero .eyebrow{display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:#e3efdf;color:#315b46;padding:6px 11px;font-size:.78rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:13px}
+    .tiger-hero{position:absolute;right:4px;bottom:0;width:225px;max-width:43%;height:245px;object-fit:contain;object-position:center bottom;z-index:1;filter:drop-shadow(0 9px 8px #264b3020);border-radius:18px;mix-blend-mode:multiply}
+    .side{position:relative;overflow:hidden;background:linear-gradient(145deg,#e8f2e4,#d9e9d5);border-color:#d2e3ce;padding:25px}
+    .side h3{font-size:1.18rem;color:var(--verde);margin-bottom:12px}
+    .side ul{list-style:none;padding:0;display:grid;gap:12px}
+    .side li{display:flex;gap:9px;align-items:flex-start}
+    .side li:before{content:"✓";flex:0 0 23px;height:23px;display:grid;place-items:center;border-radius:50%;background:#315b46;color:white;font-weight:bold;font-size:.8rem}
+    .eco-ribbon{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 22px}
+    .eco-ribbon span{background:#fff;border:1px solid var(--borde);border-radius:999px;padding:8px 12px;color:#49634f;font-size:.84rem;font-weight:700;box-shadow:0 4px 12px #294c3010}
+    .panel{border-radius:22px;border-color:#dce6d9;box-shadow:0 10px 28px #294c3009}
+    .step-title{align-items:center}
+    .num{border-radius:14px;background:linear-gradient(145deg,#e7f1e2,#d6e8d0);box-shadow:inset 0 0 0 1px #d0e2cb}
+    .primary{box-shadow:0 5px 12px #315b4625;transition:transform .15s,box-shadow .15s}
+    .primary:hover{transform:translateY(-1px);box-shadow:0 8px 17px #315b4630}
+    .option{transition:border-color .15s,background .15s,transform .15s}
+    .option:hover{border-color:#91b28e;transform:translateY(-1px)}
+    .progress{height:10px;background:#e1e9dc}.bar{background:linear-gradient(90deg,#315b46,#8aa76c);border-radius:99px}
+    .results-head{background:linear-gradient(120deg,#173d2b,#52785e);position:relative;overflow:hidden}
+    .results-head:after{content:"🌿";position:absolute;font-size:6rem;right:22px;bottom:-16px;opacity:.17;transform:rotate(-18deg)}
+    .result-card{border-radius:18px;border-color:#dce6d9;transition:transform .15s,box-shadow .15s}
+    .result-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px #294c3010}
+    .foot{padding:8px}
+    @media(max-width:720px){.intro,.grid,.results-grid{grid-template-columns:1fr}.full-card{grid-column:auto}.options{grid-template-columns:1fr}.pill{display:none}.hero{padding:22px;min-height:285px}.hero-copy{max-width:100%;padding-bottom:88px}.tiger-hero{width:145px;height:165px;right:2px;bottom:-1px}.panel{padding:20px}.top{align-items:flex-start}.intro{margin-top:18px}.side{padding:20px}}
+    @media print{header,.intro,.eco-ribbon,.progress-wrap,.panel,.actions,.foot,.print-hide{display:none!important}body{background:#fff}main{margin:0;padding:0}#results{display:block!important}.result-card,.results-head{box-shadow:none;break-inside:avoid}}
+    @media print{header,.intro,.progress-wrap,.panel,.actions,.foot,.print-hide{display:none!important}body{background:#fff}main{margin:0;padding:0}#results{display:block!important}.result-card,.results-head{box-shadow:none;break-inside:avoid}}
+
+    /* Identidad visual vibrante de EcoAprende */
+    :root{--verde:#176b48;--verde2:#21a56b;--menta:#e2f8e9;--crema:#f7fbf6;--tinta:#183b2c;--gris:#60786b;--borde:#d8eadc;--azul:#20b8cf;--amarillo:#ffd34e;--coral:#ff846c;--sombra:0 18px 48px rgba(20,78,49,.12)}
+    html{scroll-behavior:smooth;scroll-padding-top:22px}
+    body{background:#f7fbf6;color:var(--tinta);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.55;overflow-x:hidden}
+    .site-header{background:#123d2c;color:#fff;padding:0;overflow:hidden}
+    .navline{background:linear-gradient(100deg,#123d2c,#176b48);position:relative;z-index:2}
+    .top{max-width:1200px;padding:13px 24px;min-height:78px}
+    .brand{text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px}
+    .logo{width:52px;height:52px;background:#ffd34e;color:#174b35;font-size:28px;display:grid;place-items:center;border-radius:17px;box-shadow:0 5px 0 #0e3022;overflow:visible}
+    .brand h1{font-size:1.55rem;line-height:1.1;font-weight:900;letter-spacing:-.5px}.tag{font-size:.78rem;color:#d0f6db;margin:4px 0 0}
+    .main-nav{display:flex;align-items:center;gap:25px}.main-nav a{color:#f4fff7;text-decoration:none;font-size:.9rem;font-weight:750;transition:opacity .2s}.main-nav a:hover{opacity:.75}.main-nav .nav-cta{background:#ffd34e;color:#173e2b;padding:11px 17px;border-radius:999px;box-shadow:0 4px 0 #dba92a}.nav-cta span{margin-left:7px}
+    .header-bottom{display:flex;justify-content:center;gap:38px;flex-wrap:wrap;background:#0d3022;padding:10px 15px;font-size:.72rem;font-weight:850;letter-spacing:1.1px;color:#bcefd0}
+    main{max-width:1200px;padding:0 24px 60px;margin:0 auto}
+    .showcase{min-height:480px;position:relative;overflow:hidden;border-radius:0 0 34px 34px;margin:0 -24px 27px;padding:55px max(24px,calc((100% - 1152px)/2));display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:20px;background:linear-gradient(120deg,#e5f9e9 0%,#f4fbe8 45%,#c8f3e7 100%);isolation:isolate}
+    .showcase:before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 85% 75%,#21b8cf38,transparent 35%),radial-gradient(ellipse at 7% 0%,#ffd34e70,transparent 30%)}
+    .showcase-copy{position:relative;z-index:2;max-width:590px}.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #c9e8d0;color:#176b48;padding:8px 13px;border-radius:999px;font-weight:900;font-size:.72rem;letter-spacing:1px;box-shadow:0 5px 14px #164d2d0d}.spark{color:#ff9b42;font-size:1.1rem}
+    .showcase h2{font-size:clamp(2.6rem,5.3vw,4.6rem);line-height:.99;letter-spacing:-2.5px;color:#163f2d;margin:20px 0 18px;font-weight:950}.showcase h2 em{font-style:normal;color:#119b70;position:relative}.showcase-copy>p{font-size:1.12rem;max-width:525px;color:#4c6b5a;line-height:1.7}
+    .hero-actions{display:flex;align-items:center;gap:17px;flex-wrap:wrap;margin-top:25px}.hero-button{display:inline-flex;align-items:center;gap:24px;background:#ffca38;color:#173c2a;text-decoration:none;font-weight:900;padding:15px 22px;border-radius:13px;box-shadow:0 6px 0 #dfa927,0 12px 25px #c79b2733;transition:transform .2s}.hero-button:hover{transform:translateY(-3px)}.hero-button span{font-size:1.3rem}.hero-note{font-size:.85rem;color:#5b7665;font-weight:700}.hero-highlights{display:flex;gap:10px 18px;flex-wrap:wrap;margin-top:25px;font-size:.78rem;font-weight:800;color:#34664a}.hero-highlights span: first-letter{color:#14a66c}
+    .showcase-art{min-height:370px;position:relative;display:flex;align-items:center;justify-content:center}.sunburst{position:absolute;width:min(390px,90%);aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#ffdf66,#ffb94d);box-shadow:0 0 0 17px #ffd34e40,0 0 0 38px #ffd34e20}.tiger-hero{position:relative;right:auto;bottom:auto;width:min(390px,95%);max-width:none;height:370px;object-fit:contain;object-position:center;z-index:2;filter:drop-shadow(0 15px 12px #20472b28);mix-blend-mode:multiply;border-radius:25px}
+    .floating-bubble{position:absolute;z-index:3;display:flex;align-items:center;gap:7px;padding:10px 14px;border-radius:15px;background:#fff;box-shadow:0 12px 25px #1b55301a;font-size:1.45rem;transform:rotate(-7deg)}.floating-bubble small{font-size:.8rem;font-weight:900;color:#286346}.bubble-top{top:28px;left:0}.bubble-side{right:-3px;bottom:50px;background:#dff8ff;transform:rotate(7deg)}.mascot-label{position:absolute;bottom:4px;z-index:4;background:#fff;color:#176b48;font-weight:900;padding:10px 17px;border-radius:999px;box-shadow:0 8px 20px #20472b18}.mascot-label span{margin-left:5px}
+    .showcase-bg-shape{display:none}
+    .value-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin:27px 0 25px}.value-card{position:relative;display:flex;align-items:flex-start;gap:14px;padding:22px 20px;min-height:145px;border-radius:21px;overflow:hidden;box-shadow:0 10px 25px #17462c0b;transition:transform .2s}.value-card:hover{transform:translateY(-5px)}.card-green{background:#dff7e7;border:1px solid #bde9cb}.card-blue{background:#ddf7fb;border:1px solid #b8eaf2}.card-yellow{background:#fff3c8;border:1px solid #f4dfa0}.value-icon{display:grid;place-items:center;width:53px;height:53px;flex-shrink:0;background:#fff;border-radius:17px;font-size:1.7rem;box-shadow:0 5px 12px #173e2b0d}.value-card h3{font-size:1.08rem;margin:2px 0 5px;color:#194c35}.value-card p{font-size:.87rem;line-height:1.5;color:#4f6b5b;margin:0}.card-number{position:absolute;right:15px;bottom:-13px;font-size:3.5rem;font-weight:950;opacity:.09;color:#164c34}
+    .start-banner{display:flex;align-items:center;gap:20px;padding:22px 26px;border-radius:24px;background:linear-gradient(105deg,#176b48,#128d67);color:#fff;box-shadow:0 14px 30px #176b4825;margin:30px 0 22px}.start-emoji{width:68px;height:68px;display:grid;place-items:center;border-radius:22px;background:#ffffff20;font-size:2.3rem;flex-shrink:0}.start-banner .mini-title{font-size:.7rem;letter-spacing:1.3px;font-weight:900;color:#bff5d3;margin:0 0 3px}.start-banner h2{font-size:1.45rem;color:#fff;margin:0 0 4px}.start-banner p:last-child{margin:0;color:#e0f8e8;font-size:.9rem}.start-link{margin-left:auto;white-space:nowrap;background:#ffd34e;color:#193d2b;text-decoration:none;font-weight:900;padding:13px 18px;border-radius:12px;box-shadow:0 4px 0 #d9a92c}
+    .eco-ribbon{justify-content:center;margin:20px 0 28px}.eco-ribbon span{background:#fff;border:1px solid #d8eadc;border-radius:999px;padding:9px 14px;color:#2b6748;font-size:.82rem;font-weight:800;box-shadow:0 5px 12px #1c51300b}
+    .progress-wrap{background:#fff;padding:18px 22px;border-radius:18px;border:1px solid #d9eadc;box-shadow:0 8px 22px #17462c09}.progress-head{font-weight:800;color:#37654b}.progress{height:12px;background:#e8f1e9}.bar{background:linear-gradient(90deg,#21a56b,#20b8cf,#ffd34e)}
+    .panel{border-radius:24px;border:1px solid #d8eadc;box-shadow:0 14px 38px #17462c0d;padding:30px}.step-title .num{background:#176b48;color:#fff;box-shadow:0 5px 0 #d2ead7;border-radius:14px}.step-title h2{font-size:1.5rem;color:#176b48}.primary{background:linear-gradient(100deg,#176b48,#20a56b);border-radius:12px}.primary:hover{background:#12553a}.secondary{border-radius:12px}.option:has(input:checked){border-color:#20a56b;background:#e7f9ec;box-shadow:inset 0 0 0 1px #20a56b}.option input{accent-color:#168553}
+    .results-head{background:linear-gradient(120deg,#123d2c,#168d63,#20b8cf);border-radius:23px}.result-card{border-radius:20px}.foot{color:#6a8172}
+    @media(max-width:800px){.top{flex-wrap:wrap}.main-nav{gap:12px;flex-wrap:wrap}.main-nav a{font-size:.8rem}.showcase{grid-template-columns:1fr;padding-top:40px;padding-bottom:30px}.showcase-copy{max-width:100%}.showcase-art{min-height:310px}.tiger-hero{height:315px;width:min(340px,85%)}.sunburst{width:min(320px,85%)}.value-cards{grid-template-columns:1fr}.value-card{min-height:auto}.start-banner{flex-wrap:wrap}.start-link{margin-left:0}.header-bottom{gap:12px;font-size:.65rem}}
+    @media(max-width:520px){main{padding:0 14px 40px}.top{padding:12px 16px}.main-nav{width:100%;justify-content:space-between}.main-nav a{font-size:.72rem}.main-nav .nav-cta{padding:8px 10px}.showcase{margin:0 -14px 20px;border-radius:0 0 25px 25px;padding:32px 20px 25px}.showcase h2{font-size:2.7rem;letter-spacing:-1.6px}.showcase-copy>p{font-size:1rem}.showcase-art{min-height:280px}.tiger-hero{height:285px}.bubble-top{left:0;top:12px}.bubble-side{right:0;bottom:35px}.mascot-label{font-size:.85rem}.start-banner{padding:19px}.start-banner h2{font-size:1.2rem}.panel{padding:20px}.hero-highlights{gap:8px 12px}}
+
+    /* Catálogo general de kits */
+    .kit-catalog{padding:34px 0 22px;scroll-margin-top:18px}
+    .catalog-heading{text-align:center;max-width:760px;margin:0 auto 26px}
+    .catalog-heading h2{font-size:clamp(2rem,4vw,3rem);line-height:1.08;letter-spacing:-1.2px;margin:15px 0 10px;color:#173f2c}
+    .catalog-heading h2 em{font-style:normal;color:#119b70}
+    .catalog-heading p{color:#5b7665;font-size:1rem}
+    .kit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+    .kit-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-height:315px;padding:23px;border-radius:23px;border:1px solid #dce9dd;box-shadow:0 12px 30px #17462c0b;overflow:hidden;transition:transform .2s,box-shadow .2s}
+    .kit-card:hover{transform:translateY(-5px);box-shadow:0 18px 35px #17462c17}
+    .kit-card:after{content:"";position:absolute;width:135px;height:135px;border-radius:50%;right:-45px;top:-45px;background:#ffffff65}
+    .kit-mint{background:linear-gradient(145deg,#e2f9e9,#c7f0d7)}.kit-peach{background:linear-gradient(145deg,#fff0e7,#ffdbca)}.kit-blue{background:linear-gradient(145deg,#e0f8ff,#c5edfa)}.kit-lilac{background:linear-gradient(145deg,#f0eaff,#ddd4ff)}.kit-yellow{background:linear-gradient(145deg,#fff6ce,#ffeba0)}.kit-coral{background:linear-gradient(145deg,#ffe9e3,#ffd0c4)}.kit-green{background:linear-gradient(145deg,#e6f3df,#cfe7bd)}
+    .kit-emoji{display:grid;place-items:center;width:62px;height:62px;border-radius:20px;background:#ffffffc9;font-size:2rem;box-shadow:0 7px 15px #234d3010;margin-bottom:17px}
+    .kit-tag{font-size:.68rem;text-transform:uppercase;letter-spacing:.8px;font-weight:900;color:#426950;background:#ffffffa8;padding:6px 9px;border-radius:999px;margin-bottom:9px}
+    .kit-card h3{font-size:1.4rem;color:#173f2c;margin:0 0 8px}.kit-card p{font-size:.9rem;color:#435e4c;line-height:1.55;margin:0 0 14px}
+    .kit-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}.kit-chips span{font-size:.7rem;font-weight:800;color:#315b46;background:#ffffffb8;border:1px solid #ffffffaa;padding:5px 8px;border-radius:999px}
+    .kit-link{margin-top:auto;display:inline-flex;align-items:center;gap:13px;text-decoration:none;font-weight:900;font-size:.86rem;color:#174b35;background:#ffffffc7;border-radius:11px;padding:10px 13px}.kit-link span{font-size:1.1rem}
+    .catalog-note{display:flex;align-items:center;gap:16px;margin-top:20px;padding:20px 23px;background:#123d2c;color:#fff;border-radius:22px;box-shadow:0 13px 30px #17462c1c}.catalog-note>span{font-size:2.7rem;flex-shrink:0}.catalog-note p{margin:0;color:#e5f6e8;font-size:.9rem;flex:1}.catalog-note strong{color:#ffd34e}.catalog-note .hero-button{padding:12px 15px;white-space:nowrap}
+    @media(max-width:900px){.kit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:600px){.kit-grid{grid-template-columns:1fr}.kit-card{min-height:0}.catalog-note{align-items:flex-start;flex-wrap:wrap}.catalog-note .hero-button{margin-left:60px}.main-nav{gap:10px}}
+
+    @media print{.site-header,.showcase,.value-cards,.start-banner,.kit-catalog{display:none!important}}
+
+  </style>
+</head>
+<body>
+<header class="site-header" id="inicio">
+  <div class="navline"><div class="top">
+    <a class="brand" href="#inicio" aria-label="EcoAprende inicio"><div class="logo">🌱</div><div><h1>EcoAprende</h1><p class="tag">Aprender también es cuidar</p></div></a>
+    <nav class="main-nav"><a href="#inicio">Inicio</a><a href="#propuesta">Nuestra propuesta</a><a class="nav-cta" href="#todos-los-kits">Explorar kits <span>↓</span></a></nav>
+  </div></div>
+  <div class="header-bottom"><span>🌎 EDUCACIÓN SOSTENIBLE</span><span>🧩 APRENDIZAJE INCLUSIVO</span><span>♻️ REUTILIZAR PARA TRANSFORMAR</span></div>
+</header>
+<main>
+  <section class="showcase" id="propuesta">
+    <div class="showcase-bg-shape shape-one"></div><div class="showcase-bg-shape shape-two"></div>
+    <div class="showcase-copy">
+      <span class="eyebrow"><span class="spark">✦</span> APRENDER · REUTILIZAR · INCLUIR</span>
+      <h2>Pequeñas ideas.<br><em>Grandes cambios.</em></h2>
+      <p>Un kit educativo pensado para que cada estudiante encuentre su manera de aprender, mientras cuidamos el planeta.</p>
+      <div class="hero-actions"><a class="hero-button" href="#todos-los-kits">Conoce los kits <span>↓</span></a><span class="hero-note">Personalizado para tu grupo</span></div>
+      <div class="hero-highlights"><span>✓ Materiales incluidos</span><span>✓ Actividades adaptables</span><span>✓ Tecnología consciente</span></div>
+    </div>
+    <div class="showcase-art"><div class="sunburst"></div><div class="floating-bubble bubble-top">♻️ <small>Reutiliza</small></div><div class="floating-bubble bubble-side">🧠 <small>Aprende</small></div><img class="tiger-hero" src="tigr-eco.png" alt="Tigr-Eco, la mascota de EcoAprende saludando"><div class="mascot-label">¡Hola! Soy Tigr-Eco <span>🐯</span></div></div>
+  </section>
+  <section class="value-cards" aria-label="Beneficios de EcoAprende">
+    <article class="value-card card-green"><div class="value-icon">🌿</div><div><h3>Más sostenible</h3><p>Materiales reutilizables que pueden tener muchas vidas.</p></div><span class="card-number">01</span></article>
+    <article class="value-card card-blue"><div class="value-icon">🧩</div><div><h3>Más inclusivo</h3><p>Actividades que se adaptan a distintas formas de aprender.</p></div><span class="card-number">02</span></article>
+    <article class="value-card card-yellow"><div class="value-icon">💡</div><div><h3>Más consciente</h3><p>La tecnología como apoyo, con un propósito claro.</p></div><span class="card-number">03</span></article>
+  </section>
+  <section class="kit-catalog" id="todos-los-kits">
+    <div class="catalog-heading"><span class="eyebrow"><span class="spark">✦</span> EXPLORA ECOAPRENDE</span><h2>Conoce <em>todos nuestros kits</em></h2><p>Descubre las opciones disponibles. Cada kit incluye materiales reutilizables y actividades que pueden ajustarse a las necesidades del grupo.</p></div>
+    <div class="kit-grid">
+      <article class="kit-card kit-mint"><div class="kit-emoji">🔢</div><span class="kit-tag">Lógica y números</span><h3>EcoNúmeros</h3><p>Juegos para practicar conteo, cantidades, operaciones y razonamiento matemático.</p><div class="kit-chips"><span>Conteo</span><span>Operaciones</span><span>Patrones</span></div></article>
+      <article class="kit-card kit-peach"><div class="kit-emoji">📚</div><span class="kit-tag">Lenguaje</span><h3>EcoLectura</h3><p>Historias, secuencias e imágenes para fortalecer la comprensión lectora y la expresión oral.</p><div class="kit-chips"><span>Comprensión</span><span>Historias</span><span>Vocabulario</span></div></article>
+      <article class="kit-card kit-blue"><div class="kit-emoji">🧭</div><span class="kit-tag">Atención y exploración</span><h3>EcoExplora</h3><p>Retos de observación, clasificación y seguimiento de instrucciones para aprender explorando.</p><div class="kit-chips"><span>Atención</span><span>Observación</span><span>Clasificación</span></div></article>
+      <article class="kit-card kit-lilac"><div class="kit-emoji">🧠</div><span class="kit-tag">Memoria y asociación</span><h3>EcoMemoria</h3><p>Memoramas y juegos de parejas para practicar el recuerdo y la asociación visual.</p><div class="kit-chips"><span>Memoria</span><span>Asociación</span><span>Reconocimiento</span></div></article>
+      <article class="kit-card kit-yellow"><div class="kit-emoji">👐</div><span class="kit-tag">Coordinación</span><h3>EcoManos</h3><p>Actividades de ensamble y manipulación con piezas seguras para ejercitar la coordinación manual.</p><div class="kit-chips"><span>Motricidad fina</span><span>Ensamble</span><span>Coordinación</span></div></article>
+      <article class="kit-card kit-coral"><div class="kit-emoji">🎨</div><span class="kit-tag">Creatividad y equipo</span><h3>EcoCrea</h3><p>Retos colaborativos para imaginar soluciones, compartir ideas y construir en equipo.</p><div class="kit-chips"><span>Creatividad</span><span>Colaboración</span><span>Resolución</span></div></article>
+      <article class="kit-card kit-green"><div class="kit-emoji">🌈</div><span class="kit-tag">Actividades variadas</span><h3>EcoAprende Esencial</h3><p>Una combinación de juegos sencillos y adaptables cuando se buscan reforzar varias habilidades.</p><div class="kit-chips"><span>Multiarea</span><span>Flexible</span><span>Inclusivo</span></div></article>
+    </div>
+    <div class="catalog-note"><span>🐯</span><p><strong>¿Ya conociste las opciones?</strong> Después de explorar todos los kits, responde el cuestionario para recibir una recomendación adaptada a las necesidades de tu grupo.</p><a href="#encuesta" class="hero-button">Ya vi los kits: encontrar mi recomendación <span>↗</span></a></div>
+  </section>
+  <section class="start-banner"><div class="start-emoji">🎨</div><div><p class="mini-title">TU SALÓN, TU PROPUESTA</p><h2>Una recomendación pensada para tu grupo</h2><p>Explora el catálogo de kits y utiliza el único botón de inicio del cuestionario cuando estés listo.</p></div></section>
+
+  <div class="eco-ribbon"><span>🐯 Hecho para aprender</span><span>♻️ Materiales incluidos</span><span>🌈 Cada forma de aprender importa</span><span>🌎 Cuidar también es innovar</span></div>
+
+  <div class="progress-wrap" id="encuesta">
+    <div class="progress-head"><span id="stepLabel">Sección 1 de 5</span><span id="stepPercent">20%</span></div>
+    <div class="progress"><div class="bar" id="progressBar"></div></div>
+  </div>
+
+  <form id="survey">
+    <section class="panel step active" data-step="0">
+      <div class="step-title"><div class="num">1</div><div><h2>Datos generales</h2><p class="muted">Información básica para contextualizar las recomendaciones.</p></div></div>
+      <div class="grid">
+        <div class="field"><label for="role">¿Cuál es tu función?</label><select id="role" required><option value="">Selecciona una opción</option><option>Docente</option><option>Director(a)</option><option>Personal de apoyo</option><option>Otra</option></select></div>
+        <div class="field"><label for="level">Nivel educativo</label><select id="level" required><option value="">Selecciona</option><option>Preescolar</option><option>Primaria</option><option>Secundaria</option><option>Bachillerato</option><option>Otro</option></select></div>
+        <div class="field"><label for="grade">Grado escolar</label><select id="grade" required><option value="">Primero selecciona el nivel educativo</option></select></div>
+        <div class="field"><label for="students">Cantidad de alumnos</label><input id="students" type="number" min="1" max="200" placeholder="Ej. 28" required></div>
+        <div class="field full"><span class="label">¿Qué edades tienen tus alumnos? Puedes seleccionar más de un rango.</span><div class="options">
+          <label class="option"><input type="checkbox" name="ages" value="3–5 años">3–5 años</label>
+          <label class="option"><input type="checkbox" name="ages" value="6–7 años">6–7 años</label>
+          <label class="option"><input type="checkbox" name="ages" value="8–9 años">8–9 años</label>
+          <label class="option"><input type="checkbox" name="ages" value="10–12 años">10–12 años</label>
+          <label class="option"><input type="checkbox" name="ages" value="13–15 años">13–15 años</label>
+          <label class="option"><input type="checkbox" name="ages" value="16 años o más">16 años o más</label>
+        </div><div class="hint">No ingreses nombres ni datos personales de estudiantes.</div></div>
+        <div class="field full"><label for="context">Contexto de la escuela</label><select id="context" required><option value="">Selecciona</option><option>Urbano</option><option>Rural</option><option>Indígena o bilingüe</option><option>Otro / mixto</option></select></div>
+      </div>
+      <div class="actions"><span></span><button type="button" class="primary next">Continuar →</button></div>
+    </section>
+
+    <section class="panel step" data-step="1">
+      <div class="step-title"><div class="num">2</div><div><h2>Necesidades de aprendizaje</h2><p class="muted">Selecciona las áreas que te gustaría reforzar. Esto no es un diagnóstico clínico.</p></div></div>
+      <div class="field"><span class="label">¿Qué áreas necesitan mayor apoyo? (elige hasta 3)</span><div class="options" id="areas">
+        <label class="option"><input type="checkbox" name="areas" value="Matemáticas">Matemáticas</label>
+        <label class="option"><input type="checkbox" name="areas" value="Lectura y comprensión">Lectura y comprensión</label>
+        <label class="option"><input type="checkbox" name="areas" value="Escritura y vocabulario">Escritura y vocabulario</label>
+        <label class="option"><input type="checkbox" name="areas" value="Atención y concentración">Atención y concentración</label>
+        <label class="option"><input type="checkbox" name="areas" value="Memoria">Memoria</label>
+        <label class="option"><input type="checkbox" name="areas" value="Pensamiento lógico">Pensamiento lógico</label>
+        <label class="option"><input type="checkbox" name="areas" value="Motricidad fina">Motricidad fina</label>
+        <label class="option"><input type="checkbox" name="areas" value="Creatividad y colaboración">Creatividad y colaboración</label>
+      </div><div class="hint">Elige las áreas prioritarias para que las recomendaciones sean más específicas.</div></div>
+      <div class="field"><span class="label">¿Qué situaciones observas con frecuencia? (opcional)</span><div class="options">
+        <label class="option"><input type="checkbox" name="challenges" value="Comprender instrucciones">Dificultad para comprender instrucciones</label>
+        <label class="option"><input type="checkbox" name="challenges" value="Mantener la atención">Dificultad para mantener la atención</label>
+        <label class="option"><input type="checkbox" name="challenges" value="Recordar información">Dificultad para recordar información</label>
+        <label class="option"><input type="checkbox" name="challenges" value="Participar en grupo">Poca participación en grupo</label>
+        <label class="option"><input type="checkbox" name="challenges" value="Resolver tareas autónomamente">Necesitan apoyo para resolver tareas</label>
+      </div></div>
+      <div class="grid">
+        <div class="field"><label for="frequency">¿Con qué frecuencia adaptas actividades?</label><select id="frequency" required><option value="">Selecciona</option><option>Nunca</option><option>Rara vez</option><option>A veces</option><option>Frecuentemente</option><option>Siempre</option></select></div>
+        <div class="field"><label for="difficulty">Nivel de dificultad deseado</label><select id="difficulty" required><option value="">Selecciona</option><option>Básico</option><option>Intermedio</option><option>Avanzado</option><option>Varios niveles</option></select></div>
+      </div>
+      <div class="field"><span class="label">¿Qué apoyos podrían facilitar la participación? (opcional)</span><div class="options">
+        <label class="option"><input type="checkbox" name="supports" value="Instrucciones sencillas">Instrucciones breves y sencillas</label>
+        <label class="option"><input type="checkbox" name="supports" value="Apoyos visuales">Apoyos visuales</label>
+        <label class="option"><input type="checkbox" name="supports" value="Piezas fáciles de manipular">Piezas fáciles de manipular</label>
+        <label class="option"><input type="checkbox" name="supports" value="Diferentes niveles">Diferentes niveles de dificultad</label>
+        <label class="option"><input type="checkbox" name="supports" value="Distintos ritmos">Permitir distintos ritmos de trabajo</label>
+        <label class="option"><input type="checkbox" name="supports" value="Alternativas a la escritura">Alternativas a responder por escrito</label>
+      </div></div>
+      <div class="actions"><button type="button" class="secondary back">← Regresar</button><button type="button" class="primary next">Continuar →</button></div>
+    </section>
+
+    <section class="panel step" data-step="2">
+      <div class="step-title"><div class="num">3</div><div><h2>Hábitos ambientales</h2><p class="muted">EcoAprende proporciona el material del kit, así que no necesitas indicar qué recursos tiene la escuela.</p></div></div>
+      <div class="field"><label for="separation">¿Con qué frecuencia separan residuos en la escuela?</label><select id="separation" required><option value="">Selecciona</option><option>Nunca</option><option>Rara vez</option><option>A veces</option><option>Frecuentemente</option><option>Siempre</option></select></div>
+      <div class="note">Los kits de EcoAprende incluirán los materiales necesarios, priorizando elementos reutilizables, limpios y seguros para la edad del alumnado.</div>
+      <div class="actions"><button type="button" class="secondary back">← Regresar</button><button type="button" class="primary next">Continuar →</button></div>
+    </section>
+
+    <section class="panel step" data-step="3">
+      <div class="step-title"><div class="num">4</div><div><h2>Cómo se utilizará el kit</h2><p class="muted">Ayúdanos a recomendar actividades que sí puedan aplicarse en el salón.</p></div></div>
+      <div class="grid">
+        <div class="field"><label for="time">Tiempo disponible por actividad</label><select id="time" required><option value="">Selecciona</option><option>Menos de 10 minutos</option><option>10–20 minutos</option><option>21–30 minutos</option><option>Más de 30 minutos</option></select></div>
+        <div class="field"><label for="organization">Organización preferida</label><select id="organization" required><option value="">Selecciona</option><option>Individual</option><option>En parejas</option><option>En equipos pequeños</option><option>Todo el grupo</option><option>Combinación</option></select></div>
+        <div class="field"><label for="prep">Preparación de los juegos</label><select id="prep" required><option value="">Selecciona</option><option>Debe ser muy sencilla</option><option>Puede requerir algo de preparación</option><option>Puede requerir más preparación</option></select></div>
+        <div class="field"><label for="format">Formato de instrucciones</label><select id="format" required><option value="">Selecciona</option><option>Tarjetas impresas</option><option>Manual breve</option><option>Fichas individuales</option><option>Guía digital</option></select></div>
+      </div>
+      <div class="field"><span class="label">¿Qué tipos de juegos te interesan? (opcional)</span><div class="options">
+        <label class="option"><input type="checkbox" name="gameTypes" value="Clasificación">Clasificación y asociación</label>
+        <label class="option"><input type="checkbox" name="gameTypes" value="Memoria">Memoria y parejas</label>
+        <label class="option"><input type="checkbox" name="gameTypes" value="Tarjetas">Tarjetas de preguntas</label>
+        <label class="option"><input type="checkbox" name="gameTypes" value="Construcción">Construcción y patrones</label>
+        <label class="option"><input type="checkbox" name="gameTypes" value="Cooperación">Retos cooperativos</label>
+        <label class="option"><input type="checkbox" name="gameTypes" value="Movimiento">Movimiento y coordinación</label>
+      </div></div>
+      <div class="field"><label for="levels">¿Qué tan importante es contar con varios niveles?</label><select id="levels" required><option value="">Selecciona</option><option>Nada importante</option><option>Poco importante</option><option>Importante</option><option>Muy importante</option><option>Indispensable</option></select></div>
+      <div class="actions"><button type="button" class="secondary back">← Regresar</button><button type="button" class="primary next">Ver recomendaciones →</button></div>
+    </section>
+
+    <section class="panel step" data-step="4">
+      <div class="step-title"><div class="num">5</div><div><h2>Confirmación</h2><p class="muted">Antes de generar el reporte, revisa esta información.</p></div></div>
+      <p>Al seleccionar “Generar mi reporte”, la página organizará tus respuestas y creará recomendaciones mediante reglas programadas. En esta versión no se envía información a servidores ni se consulta una IA externa.</p>
+      <div class="note">El reporte es orientativo y no sustituye la valoración profesional ni el criterio del docente. Utiliza información general del grupo; no introduzcas nombres ni datos identificables de alumnos.</div>
+      <label class="option" style="margin-top:17px"><input type="checkbox" id="consent" required> Confirmo que no he incluido datos personales identificables de estudiantes y que usaré las recomendaciones como apoyo para la planeación.</label>
+      <div id="error" class="error">Completa los campos obligatorios y selecciona al menos un área de aprendizaje. Puedes regresar a la sección correspondiente.</div>
+      <div class="actions"><button type="button" class="secondary back">← Regresar</button><button type="submit" class="primary">Generar mi reporte</button></div>
+    </section>
+  </form>
+
+  <section id="results">
+    <div class="results-head">
+      <p style="margin-bottom:5px;color:#e2eadf">REPORTE PERSONALIZADO · ECOAPRENDE</p>
+      <h2 id="resultTitle">Tu kit recomendado</h2>
+      <p id="resultSummary" style="margin-bottom:0"></p>
+    </div>
+    <div class="results-grid" id="resultCards"></div>
+    <div class="actions print-hide" style="justify-content:center;margin-top:20px">
+      <button type="button" class="secondary" id="editBtn">← Editar respuestas</button>
+      <a class="secondary" href="#todos-los-kits" style="display:inline-block;text-decoration:none;padding:12px 19px;border-radius:11px;font-weight:700">Ver todos los kits</a>
+      <button type="button" class="primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+      <button type="button" class="secondary" id="newBtn">Nuevo diagnóstico</button>
+    </div>
+    <p class="foot">EcoAprende · Recomendaciones de apoyo docente. Revisa la seguridad de los materiales y adapta las actividades al contexto real del grupo.</p>
+  </section>
+  <p class="foot" id="siteFoot">Prototipo escolar de EcoAprende · Educación sostenible e inclusiva</p>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const gradeOptions = {
+  'Preescolar':['1.º','2.º','3.º'],
+  'Primaria':['1.º','2.º','3.º','4.º','5.º','6.º'],
+  'Secundaria':['1.º','2.º','3.º'],
+  'Bachillerato':['1.º semestre','2.º semestre','3.º semestre','4.º semestre','5.º semestre','6.º semestre'],
+  'Otro':['Otro']
+};
+$('#level').addEventListener('change', () => {
+  const level = $('#level').value;
+  const grade = $('#grade');
+  grade.innerHTML = '<option value=>Selecciona el grado</option>';
+  (gradeOptions[level] || []).forEach(value => {
+    const option = document.createElement('option'); option.value = value; option.textContent = value; grade.appendChild(option);
+  });
+});
+let current = 0;
+const steps = $$('.step');
+
+function showStep(i){
+  current = i;
+  steps.forEach((s,n)=>s.classList.toggle('active',n===i));
+  $('#stepLabel').textContent = `Sección ${i+1} de ${steps.length}`;
+  $('#stepPercent').textContent = `${Math.round((i+1)/steps.length*100)}%`;
+  $('#progressBar').style.width = `${(i+1)/steps.length*100}%`;
+  $('#error').style.display='none';
+  steps[i].scrollIntoView({behavior:'smooth', block:'start'});
+}
+function selected(name){return $$(`input[name="${name}"]:checked`).map(x=>x.value)}
+function validateStep(i){
+  const fields = [...steps[i].querySelectorAll('[required]')].filter(el=>el.type!=='checkbox');
+  for(const el of fields){if(!el.checkValidity()){el.reportValidity();return false;}}
+  if(i===0 && selected('ages').length===0){alert('Selecciona al menos un rango de edad.');return false;}
+  if(i===1 && selected('areas').length===0){alert('Selecciona al menos un área de aprendizaje.');return false;}
+  if(i===1 && selected('areas').length>3){alert('Selecciona máximo 3 áreas prioritarias.');return false;}
+  return true;
+}
+$$('.next').forEach(btn=>btn.addEventListener('click',()=>{if(validateStep(current))showStep(Math.min(current+1,steps.length-1));}));
+$$('.back').forEach(btn=>btn.addEventListener('click',()=>showStep(Math.max(current-1,0))));
+$$('input[name="areas"]').forEach(cb=>cb.addEventListener('change',()=>{
+  const checked=selected('areas');
+  if(checked.length>3){cb.checked=false;alert('Puedes elegir hasta 3 áreas prioritarias.');}
+}));
+function escapeHTML(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function card(title, body, full=false){return `<article class="result-card ${full?'full-card':''}"><h3>${title}</h3>${body}</article>`;}
+function list(items){return `<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`;}
+
+const gameMap={
+  'Matemáticas':{game:'Contadores numéricos',goal:'Reforzar conteo, comparación de cantidades y operaciones básicas.',materials:['Tapas limpias','Cartón','Marcador'],ideas:['Comenzar con cantidades pequeñas y aumentar poco a poco.','Representar cada operación con objetos antes de pasar a los números.']},
+  'Lectura y comprensión':{game:'Historias en secuencia',goal:'Trabajar comprensión, orden de acontecimientos y expresión oral.',materials:['Tarjetas de cartón','Papel reutilizable','Colores'],ideas:['Usar imágenes y frases breves como apoyo.','Pedir que ordenen las tarjetas y expliquen su elección.']},
+  'Escritura y vocabulario':{game:'Tarjetas de palabras',goal:'Ampliar vocabulario y formar palabras u oraciones.',materials:['Cartón','Papel reutilizable','Marcadores'],ideas:['Empezar con palabras conocidas y avanzar a frases.','Ofrecer imágenes o ejemplos cuando sea necesario.']},
+  'Atención y concentración':{game:'Reto de clasificación',goal:'Practicar observación, atención a instrucciones y clasificación.',materials:['Tapas limpias','Recipientes reutilizados seguros','Tarjetas'],ideas:['Dar una instrucción por vez.','Comenzar con una categoría y añadir otras gradualmente.']},
+  'Memoria':{game:'Memorama reutilizable',goal:'Ejercitar recuerdo, asociación y reconocimiento visual.',materials:['Cartón','Papel','Lápices de colores'],ideas:['Comenzar con pocas parejas.','Aumentar las parejas cuando el grupo esté preparado.']},
+  'Pensamiento lógico':{game:'Patrones y secuencias',goal:'Reconocer regularidades, ordenar y resolver problemas.',materials:['Tapas limpias','Cartón','Marcadores'],ideas:['Empezar con patrones de dos elementos.','Pedir que expliquen qué elemento sigue y por qué.']},
+  'Motricidad fina':{game:'Clasificación y ensamble',goal:'Practicar coordinación manual mediante piezas grandes y seguras.',materials:['Cartón resistente','Piezas grandes de material seguro','Recipientes'],ideas:['Ajustar el tamaño de las piezas a la edad.','Evitar piezas pequeñas, filosas o difíciles de manipular.']},
+  'Creatividad y colaboración':{game:'Reto de creación en equipo',goal:'Fomentar creatividad, comunicación y resolución conjunta de retos.',materials:['Cartón','Papel reutilizable','Cinta o pegamento escolar'],ideas:['Asignar roles sencillos y rotativos.','Valorar distintas soluciones, no solo una respuesta única.']}
+};
+function generateReport(){
+  const areas=selected('areas'), supports=selected('supports');
+  const challenges=selected('challenges'), gameTypes=selected('gameTypes');
+  const ages=selected('ages');
+  const level=$('#level').value, grade=$('#grade').value, students=$('#students').value;
+  let primary = areas[0];
+  let kitName = areas.includes('Matemáticas')?'EcoNúmeros':areas.includes('Lectura y comprensión')?'EcoLectura':areas.includes('Atención y concentración')?'EcoExplora':areas.includes('Memoria')?'EcoMemoria':areas.includes('Motricidad fina')?'EcoManos':areas.includes('Creatividad y colaboración')?'EcoCrea':'EcoAprende Esencial';
+  const games = areas.map(a=>gameMap[a]).filter(Boolean);
+  const mats = [...new Set(games.flatMap(g=>g.materials))];
+  const suggestions = [];
+  if($('#difficulty').value==='Varios niveles' || $('#levels').value==='Muy importante' || $('#levels').value==='Indispensable' || supports.includes('Diferentes niveles')){
+    suggestions.push('Prepara tarjetas o retos de nivel inicial, intermedio y avanzado para que el docente elija según el progreso observado.');
+  }
+  if(supports.includes('Instrucciones sencillas') || challenges.includes('Comprender instrucciones')){
+    suggestions.push('Divide las instrucciones en pasos cortos y muestra un ejemplo antes de comenzar.');
+  }
+  if(supports.includes('Apoyos visuales')) suggestions.push('Incluye símbolos, dibujos o ejemplos visuales en las tarjetas.');
+  if(supports.includes('Distintos ritmos')) suggestions.push('Permite que el alumnado complete la actividad a distintos ritmos sin comparaciones públicas.');
+  if(supports.includes('Alternativas a la escritura')) suggestions.push('Permite responder señalando, clasificando piezas o explicando oralmente, cuando el objetivo lo permita.');
+  if(supports.includes('Piezas fáciles de manipular') || areas.includes('Motricidad fina')) suggestions.push('Prueba el tamaño y agarre de las piezas; prioriza piezas grandes, livianas y sin bordes cortantes.');
+  if(challenges.includes('Mantener la atención')) suggestions.push('Organiza actividades breves, con una meta clara y pausas cuando sean necesarias.');
+  if(challenges.includes('Participar en grupo')) suggestions.push('Distribuye roles para que cada estudiante tenga una forma concreta de participar.');
+  if(suggestions.length===0) suggestions.push('Observa cómo participa el grupo y ajusta las reglas, el tiempo o la dificultad según las necesidades que notes.');
+  let gameHTML=games.map(g=>`<div style="border-top:1px solid #e2e9df;padding:12px 0"><strong>${g.game}</strong><p style="margin:5px 0"><b>Objetivo:</b> ${g.goal}</p><p style="margin:5px 0"><b>Materiales:</b> ${g.materials.join(', ')}.</p><ul>${g.ideas.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
+  if(gameTypes.length) gameHTML+=`<p><b>Preferencias de juegos:</b> ${gameTypes.join(', ')}.</p>`;
+  const ageText=ages.join(', ');
+  const groupInfo=`${escapeHTML(level)} · ${escapeHTML(grade)} · ${escapeHTML(ageText)} · ${escapeHTML(students)} alumnos`;
+  $('#resultTitle').textContent=`Kit recomendado: ${kitName}`;
+  $('#resultSummary').textContent=`${groupInfo}. Recomendaciones orientativas basadas en tus respuestas.`;
+  const cards=[
+    card('Resumen del grupo',`<p><span class="badge">${escapeHTML(level)}</span><span class="badge">${escapeHTML(grade)}</span><span class="badge">${escapeHTML(students)} alumnos</span></p><p><b>Edades:</b> ${escapeHTML(ageText)}</p><p><b>Contexto:</b> ${escapeHTML($('#context').value)}</p><p><b>Áreas prioritarias:</b> ${areas.map(escapeHTML).join(', ')}</p>`),
+    card('Objetivo del kit',`<p>Proponer actividades prácticas que refuercen ${areas.map(escapeHTML).join(', ').toLowerCase()} utilizando los materiales reutilizables incluidos en el kit y adaptaciones que el docente puede ajustar según su observación del grupo.</p><p><b>Formato de instrucciones:</b> ${escapeHTML($('#format').value)}.</p><p><b>Organización:</b> ${escapeHTML($('#organization').value)}.</p>`),
+    card('Juegos recomendados',gameHTML,true),
+    card('Materiales incluidos en el kit',list(mats.map(escapeHTML))+`<p>EcoAprende proporcionará los materiales necesarios para realizar las actividades recomendadas.</p>`),
+    card('Adaptaciones sugeridas',list(suggestions.map(escapeHTML)),true),
+    card('Uso y organización',list([
+      `Tiempo estimado por actividad: ${escapeHTML($('#time').value)}.`,
+      `Preparación: ${escapeHTML($('#prep').value)}.`,
+      `Nivel de dificultad seleccionado: ${escapeHTML($('#difficulty').value)}.`,
+      `Frecuencia con la que adaptas actividades: ${escapeHTML($('#frequency').value)}.`,
+      `Separación de residuos en la escuela: ${escapeHTML($('#separation').value)}.`
+    ].map(escapeHTML))),
+    card('Compromiso ambiental',`<p>Prioriza materiales que ya existen, reutilízalos en varias actividades y guarda las piezas para prolongar su vida útil. Recolecta solo materiales limpios y seguros; evita comprar elementos nuevos si hay alternativas adecuadas.</p><p><b>Nota:</b> este prototipo no calcula una cantidad de residuos evitados porque no se han medido los materiales efectivamente reutilizados.</p>`),
+    card('Alcance y límites',`<p>Este reporte es una orientación para planear actividades; no identifica ni diagnostica discapacidades, trastornos o condiciones individuales. Contrasta las sugerencias con tu experiencia, los objetivos curriculares y las necesidades observadas.</p><p>La recomendación se generó con reglas locales de esta página; no se envió información a una IA ni a un servidor.</p>`,true)
+  ];
+  $('#resultCards').innerHTML=cards.join('');
+  $('#survey').style.display='none'; $('.progress-wrap').style.display='none'; $('#results').style.display='block'; $('#siteFoot').style.display='none';
+  steps[i].scrollIntoView({behavior:'smooth', block:'start'});
+}
+$('#survey').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!$('#consent').checked){$('#error').style.display='block';$('#error').textContent='Marca la confirmación para continuar.';return;}
+  if(!validateStep(0)||!validateStep(1)||!validateStep(2)||!validateStep(3)){showStep(current);$('#error').style.display='block';$('#error').textContent='Revisa las secciones anteriores y completa los campos obligatorios. Selecciona al menos un área y un rango de edad.';return;}
+  generateReport();
+});
+$('#editBtn').addEventListener('click',()=>{$('#results').style.display='none';$('#survey').style.display='block';$('.progress-wrap').style.display='block';$('#siteFoot').style.display='block';showStep(0);});
+$('#newBtn').addEventListener('click',()=>{if(confirm('¿Quieres borrar las respuestas e iniciar un diagnóstico nuevo?')){ $('#survey').reset(); $('#results').style.display='none';$('#survey').style.display='block';$('.progress-wrap').style.display='block';$('#siteFoot').style.display='block';showStep(0);window.scrollTo({top:0,behavior:'smooth'});}});
+</script>
+</body>
+</html>
